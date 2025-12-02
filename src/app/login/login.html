@@ -1,0 +1,52 @@
+<form (ngSubmit)="login()" #loginForm="ngForm">
+
+  <!-- אימייל -->
+  <input type="email" 
+         placeholder="Email" 
+         [(ngModel)]="email" 
+         name="email" 
+         required 
+         #emailControl="ngModel"
+         (input)="clearError()" />
+  
+  <div *ngIf="loginForm.submitted && emailControl.invalid" style="color: blue; font-size: 0.8em;">
+    <div *ngIf="emailControl.errors?.['required']">
+      Email is required.
+    </div>
+    <div *ngIf="emailControl.errors?.['email'] && !emailControl.errors?.['required']">
+      Invalid email format.
+    </div>
+  </div>
+
+  <!-- טלפון -->
+  <input type="text" 
+         placeholder="Phone" 
+         [(ngModel)]="phone" 
+         name="phone" 
+         required
+         pattern="[0-9]{9,10}" 
+         #phoneControl="ngModel"
+         (input)="clearError()" />
+
+  <div *ngIf="loginForm.submitted && phoneControl.invalid" style="color: blue; font-size: 0.8em;">
+    <div *ngIf="phoneControl.errors?.['required']">
+      Phone number is required.
+    </div>
+    <div *ngIf="phoneControl.errors?.['pattern'] && !phoneControl.errors?.['required']">
+      Phone number must be 9 or 10 digits.
+    </div>
+  </div>
+  
+  <br>
+
+  <button type="submit" 
+          [disabled]="!emailControl.value || !phoneControl.value">
+    Login
+  </button>
+
+  <!-- הודעת שגיאה מהשרת -->
+  <div *ngIf="errorMessage" style="color: red; margin-top: 10px;">
+    {{ errorMessage }}
+    <button type="button" (click)="goToRegister()" style="margin-left: 10px;">Register Now</button>
+  </div> 
+</form>

@@ -1,0 +1,27 @@
+<div class="app-container">
+  <nav class="navbar">
+    <div class="logo">
+      <img src="assets/pic/logo-b.jpg" alt=""> HOMEIST
+    </div>
+    <ul class="nav-links">
+      <li><a routerLink="home-page">Home</a></li>
+      <li><a routerLink="main-catalog">Catalog</a></li>
+      <li><a routerLink="about">About Us</a></li>
+      <li><a routerLink="login">Login</a></li>
+       <li><a routerLink="register">register</a></li>
+      <li><a routerLink="cart">Cart</a></li>
+    </ul>
+  </nav>
+
+
+  <main class="main-content">
+    <!-- כאן נטען הדף לפי ה-Route -->
+    <router-outlet></router-outlet>
+  
+  </main>
+
+
+  <footer class="footer">
+    &copy; 2025 HomeStore. All rights reserved.
+  </footer>
+</div>

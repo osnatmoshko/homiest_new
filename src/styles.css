@@ -1,0 +1,387 @@
+
+:root {
+  --bg-beige: #f5f0e1;
+  --text-dark: #333333;
+  --accent: #ffffff;
+}
+
+/* בסיסי */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-beige);
+  color: var(--text-dark);
+}
+
+/* מיכל כללי */
+.app-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ניווט עליון */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--accent);
+  padding: 1rem 2rem;
+}
+
+.navbar .logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-family: papyrus;
+  color: var(--text-dark);
+}
+
+.navbar .logo img {
+  height: 1.5em;
+  margin-right: 0.5em;
+}
+
+/* לינקים בניווט */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: var(--text-dark);
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-links li a:hover {
+  color: #bfa980;
+}
+
+/* תוכן הדף */
+.main-content {
+  flex: 1;
+  background-color: var(--bg-beige);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: var(--accent);
+  border-top: 1px solid #e0d8c8;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+}
+
+/* מיכל הסרטון/תמונה */
+.home-page-container {
+  position: relative;
+  width: 100%;
+  height: auto; /* גובה משתנה לפי תוכן */
+  overflow: hidden;
+}
+
+/* סרטון או תמונה ברוחב מלא */
+.home-video,
+.home-page-container img {
+  width: 100%;    /* רוחב מלא */
+  height: auto;   /* שומר על יחס גובה */
+  display: block;
+}
+#about-us img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+}
+
+.home-page-container img{
+  padding: 40px;
+}
+/* שכבת תוכן מעל */
+.overlay-content {
+  position: absolute;
+  top: 390px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+  z-index: 1;
+  padding: 0 1rem;
+}
+
+.overlay-content h1 {
+  font-size: 3rem;
+  margin: 0;
+  color: white;
+  letter-spacing: 2px;
+}
+
+/* קטלוג */
+.catalog-container {
+  text-align: center;
+  padding: 6rem 4rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.catalog-grid {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.catalog-item {
+  position: relative;
+  width: 400px;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.catalog-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.catalog-item:hover img {
+  transform: scale(1.05);
+}
+
+.catalog-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.85);
+  border: none;
+  color: #2d2d2d;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 5px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.catalog-btn:hover {
+  background: white;
+  transform: translate(-50%, -50%) scale(1.05);
+  z-index: 10;
+}
+
+/* אזור הלוגו והכיתוב */
+.catalog-logo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  gap: 1rem;
+  text-align: center;
+}
+
+.catalog-logo img {
+  width: 60px;
+}
+
+.catalog-logo h1 {
+  font-size: 2.5rem;
+  color: white;
+  letter-spacing: 2px;
+  margin: 0;
+}
+.image-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem; /* רווח בין המסגרות */
+  padding: 3rem 0;
+  background-color: var(--bg-beige); /* רקע אחיד עם האתר */
+}
+
+.image-box {
+  width: 230px;
+  height: 310px;
+  border: 2px solid #000;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+
+}
+
+.image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ממלאת יפה את המסגרת */
+  transition: transform 0.4s ease;
+  
+}
+
+
+.image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ממלאת את המסגרת יפה */
+}
+
+.catalog-item {
+  position: relative;
+}
+
+.catalog-item img {
+  pointer-events: none; /* הכי חשוב למניעת חסימת הקליק */
+}
+
+.catalog-btn {
+  position: absolute !important;
+  z-index: 999 !important;
+}
+/* ------------------------------------------------ */
+/* ⭐️ עיצוב סרגל טווח המחירים (NGX-SLIDER) ⭐️ */
+/* ------------------------------------------------ */
+
+/* 1. עיצוב הפס הלא-פעיל (הפס שמתחת לטווח הנבחר) */
+.ngx-slider .ngx-slider-bar {
+    background-color: #E0DED7 !important; /* בז' בהיר מאוד / אבן */
+    height: 4px !important;
+    border-radius: 2px !important;
+}
+
+/* 2. עיצוב הפס הפעיל (הפס בין שתי הידיות) */
+.ngx-slider .ngx-slider-selection {
+    background-color: #B8A88B !important; /* בז' עמוק / חול */
+    box-shadow: none !important;
+}
+
+/* 3. עיצוב הידיות (העיגולים) */
+.ngx-slider .ngx-slider-pointer {
+    width: 16px !important;
+    height: 16px !important;
+    top: -6px !important; /* מכוון את גובה הידית מעל הציר */
+    background-color: #FAF6EB !important; /* צבע בז' קרמי בהיר */
+    border: 2px solid #B8A88B !important; /* מסגרת בצבע בז' עמוק */
+    border-radius: 50% !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important; /* צל קטן לעומק */
+}
+
+/* 4. עיצוב הידיות במצב ריחוף (Hover) */
+.ngx-slider .ngx-slider-pointer:after {
+    background-color: #B8A88B !important; /* משנה את צבע הנקודה הפנימית בריחוף */
+}
+
+/* 5. הסתרת המספרים הקופצים (תוויות מעל הידיות) */
+.ngx-slider .ngx-slider-model-value,
+.ngx-slider .ngx-slider-limit {
+    display: none !important;
+}
+/* 4. הסתרת הנקודה הפנימית המוזרה שמופיעה בגרירה/ריחוף */
+.ngx-slider .ngx-slider-pointer:after {
+    /* נטרול הנקודה הפנימית */
+    background-color: transparent !important; 
+    /* אפשר גם להקטין את הגודל ל-0 אם ה-background-color לא עובד */
+    width: 0 !important;
+    height: 0 !important;
+}/* 4. הסתרת הנקודה הפנימית המוזרה שמופיעה בגרירה/ריחוף */
+.ngx-slider .ngx-slider-pointer:after {
+    /* נטרול הנקודה הפנימית */
+    background-color: transparent !important; 
+    /* אפשר גם להקטין את הגודל ל-0 אם ה-background-color לא עובד */
+    width: 0 !important;
+    height: 0 !important;
+}
+.range-filter-wrapper {
+    /* הגבל את רוחב המיכל שמכיל את הסליידר */
+    width: 400px; /* 💡 שנה את זה לרוחב הרצוי (לדוגמה, 400px) */
+    max-width: 90%; /* כדי לוודא שזה יעבוד גם בטלפונים */
+    
+    /* מיקום במרכז הדף */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ודא שהסליידר ממלא את ה-Wrapper החדש שהגדרת */
+.range-filter {
+    width: 100%; 
+    box-sizing: border-box; /* מומלץ לוודא שהפדינג לא גורם לגלישה */
+}
+/* עמוד מוצרים----------------------------------------------------------------- */
+/* כל העמוד */
+.product-grid-container {
+  padding: 20px;
+  background-color: #fdfaf6;
+  min-height: 180vh;
+}
+
+/* גריד 4 מוצרים בשורה */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+/* כרטיס מוצר בגובה קבוע */
+.product-card {
+  background-color: #ffffff;
+  border: 1px solid #e0dcd2;
+  border-radius: 12px;
+  text-align: center;
+  padding: 15px;
+  height: 300px; /* גובה קבוע לכל הכרטיסים */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* אזור לחיצה על תמונה ושם */
+.product-clickable {
+  cursor: pointer;
+}
+
+.product-clickable img {
+  width: 100%;
+  height: 180px;          /* כל התמונות באותו גובה */
+  object-fit: cover;      /* התמונות מתמלאות במלוא השטח ומחוץ לגבולות נחתכות */
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+
+.product-clickable h3 {
+  font-size: 1rem;
+  margin: 0;
+  color: #333;
+}
+
+/* כפתור */
+button {
+  padding: 8px 12px;
+  background-color: #d4b483;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #b38f5c;
+}

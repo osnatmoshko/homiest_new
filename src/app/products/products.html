@@ -1,0 +1,53 @@
+
+<div class="filters" dir="rtl">
+  <h3 *ngIf="allProduct.length > 1">מסננים ומיון</h3>
+
+  <div class="range-filter" *ngIf="allProduct.length > 1">
+    <h4>טווח מחירים (ILS)</h4>
+    <div style="display: flex; justify-content: space-between; direction: ltr; margin-bottom: 5px;">
+      <span>₪{{maxPrice}}</span>
+      <span>₪{{minPrice}}</span>
+    </div>
+    <ngx-slider 
+      [(value)]="minPrice" 
+      [(highValue)]="maxPrice" 
+      [options]="sliderOptions"
+      (userChangeEnd)="applyFilters()">
+    </ngx-slider>
+    <hr>
+    <label>מיין לפי:</label>
+    <select [(ngModel)]="sortOrder" (change)="applyFilters()">
+      <option value="">ללא</option>
+      <option value="asc">מחיר נמוך → גבוה</option>
+      <option value="desc">מחיר גבוה → נמוך</option>
+    </select>
+  </div>
+</div>
+
+<div class="product-grid-container" dir="rtl">
+
+  <!-- Loader בזמן טעינה -->
+  <div *ngIf="filteredProducts.length === 0">
+    <p>טוען מוצרים...</p>
+  </div>
+
+  <!-- גריד המוצרים -->
+<div class="product-grid-container">
+  <div class="product-grid">
+    <div *ngFor="let product of filteredProducts" class="product-card">
+      <!-- לחיצה על תמונה או שם מפעילה את פונקציית MORE -->
+      <div class="product-clickable" (click)="singleProduct(product.productID)">
+        <img [src]="product.imageURL" alt="{{product.productName}}">
+        <h3>{{product.productName}}</h3>
+      </div>
+
+      <!-- מחיר -->
+      <p class="product-price">₪{{product.price}}</p>
+
+      <!-- כפתור הוספה לסל -->
+      <button (click)="addCart(product.productID)">Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+</div>

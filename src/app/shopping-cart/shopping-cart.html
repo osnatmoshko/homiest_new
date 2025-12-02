@@ -1,0 +1,34 @@
+<!-- רק אם יש פריטים בעגלה -->
+<div *ngIf="showCart.length > 0">
+  <ul>
+    <li *ngFor="let item of showCart">
+      {{item.productName}} - {{item.quantity}} x {{item.price | currency}} {{item.imageUrl}}
+      <button (click)="deleteItem(item.productID)">-</button>
+      <button (click)="addItem(item.productID)">+</button>
+    </li>
+  </ul>
+
+  <hr />
+
+  <div class="total">
+    <strong>Total: {{ totalAmount | currency }}</strong>
+  </div>
+
+  <!-- שדה הערות -->
+  <div>
+    <label for="notes">Notes:</label>
+    <input id="notes" type="text" [(ngModel)]="purchaseNotes" placeholder="Write your notes here..." />
+  </div>
+
+  <button (click)="finishPurchase()">Finish Purchase</button>
+
+  <!-- הודעה -->
+  <div *ngIf="message" class="cart-message">{{ message }}</div>
+</div>
+
+<!-- אם אין פריטים והמשתמש מחובר -->
+<div *ngIf="showCart.length == 0 && isLoggedIn">
+   Cart is empty...
+</div>
+
+<!-- אם המשתמש לא מחובר, יצור כפתור התחברות דינמי בקומפוננטה TS -->

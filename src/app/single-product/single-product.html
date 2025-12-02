@@ -1,0 +1,18 @@
+<button (click)="back()">Back</button>
+
+<div *ngIf="product">
+  <h2>{{ product.productName }}</h2>
+  
+  <p><strong>SKU:</strong> {{ product.productID }}</p>
+  <p><strong>Category:</strong> {{ product.categoryName }}</p>
+
+  <button (click)="addCart(product.productID)">Add to Cart</button>
+  
+  <div *ngIf="message" style="color: green; margin-top: 10px;">
+    {{ message }}
+  </div>
+</div>
+
+<div *ngIf="!product">
+  ...Loading or product not found...
+</div>
