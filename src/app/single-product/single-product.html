@@ -1,18 +1,38 @@
-<button (click)="back()">Back</button>
-
-<div *ngIf="product">
-  <h2>{{ product.productName }}</h2>
-  
-  <p><strong>SKU:</strong> {{ product.productID }}</p>
-  <p><strong>Category:</strong> {{ product.categoryName }}</p>
-
-  <button (click)="addCart(product.productID)">Add to Cart</button>
-  
-  <div *ngIf="message" style="color: green; margin-top: 10px;">
-    {{ message }}
+<div class="modal-overlay" (click)="back()">
+  <div class="modal-content" (click)="$event.stopPropagation()" *ngIf="product">
+    <button class="close-btn" (click)="back()">&times;</button>
+    
+    <div class="product-modal">
+      <div class="product-image-section">
+        <img [src]="product.imageURL" alt="{{ product.productName }}">
+      </div>
+      
+      <div class="product-details-section">
+        <h2 class="product-title">{{ product.productName }}</h2>
+        
+        <div class="product-description">
+          <p>{{ product.description || 'Premium quality furniture piece designed to enhance your living space with style and comfort. Crafted with attention to detail and built to last.' }}</p>
+        </div>
+        
+        <div class="product-info">
+          <div class="info-item price-item">
+            <span class="label">Price:</span>
+            <span class="price">${{ product.price }}</span>
+          </div>
+        </div>
+        
+        <button class="add-to-cart-modal-btn" (click)="addCart(product.productID)">
+          Add to Cart
+        </button>
+        
+        <div *ngIf="message" class="success-message">
+          {{ message }}
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-
-<div *ngIf="!product">
-  ...Loading or product not found...
+  
+  <div class="loading-modal" *ngIf="!product">
+    <p>Loading product details...</p>
+  </div>
 </div>

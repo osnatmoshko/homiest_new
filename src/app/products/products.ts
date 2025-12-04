@@ -24,12 +24,12 @@ export class Products implements OnInit {
 
   allProduct: Product[] = [];
   filteredProducts: Product[] = [];
-
   minPrice!: number;
   maxPrice!: number;
   sortOrder: 'asc' | 'desc' | '' = '';
 
   message: string = ''; // הודעה ליד המוצר
+  successProducts: Set<number> = new Set(); // מעקב אחר מוצרים שנוספו בהצלחה
 
   constructor(
     private service: ProductService,
@@ -41,6 +41,8 @@ export class Products implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const category = params.get('category')!;
+      this.setCategoryHeader(category);
+      
       this.service.getByCategory(category).subscribe({
         next: (data) => {
           this.allProduct = data;
@@ -61,6 +63,20 @@ export class Products implements OnInit {
         error: (err) => console.error('API failed:', err)
       });
     });
+  }
+
+  setCategoryHeader(category: string): void {
+    const categoryImages: {[key: string]: string} = {
+      'Living Rooms': 'assets/pic/living-room-main-catalog.jpeg',
+      'Bedrooms': 'assets/pic/bed-room-main-catalog.jpg',
+      'Kitchens': 'assets/pic/kitchen-main-catalot.jpg'
+    };
+
+    const titleElement = document.getElementById('categoryTitle');
+    const imageElement = document.getElementById('categoryImage') as HTMLImageElement;
+    
+    if (titleElement) titleElement.textContent = category;
+    if (imageElement) imageElement.src = categoryImages[category] || '';
   }
 
   applyFilters(): void {
@@ -88,35 +104,36 @@ export class Products implements OnInit {
     this.router.navigate(['/single-product', id]);
   }
 
-  addCart(idProduct: number) {
-    const customerStr = localStorage.getItem('customer');
+  
+addCart(idProduct: number) {
+  const customerStr = localStorage.getItem('customer');
 
-    if (!customerStr) {
-      this.message = 'You are not logged in! Redirecting to login...';
-      setTimeout(() => this.router.navigate(['/login']), 2000);
-      return;
-    }
-
-    const customerObj: Customer = JSON.parse(customerStr);
-    const idCustomer = customerObj.id;
-
-    if (!idCustomer) {
-      this.message = 'You are not logged in! Redirecting to login...';
-      setTimeout(() => this.router.navigate(['/login']), 2000);
-      return;
-    }
-
-    this.servCart.addToTheCart(idCustomer, idProduct).subscribe({
-      next: (res) => {
-        this.message = (res as any).message || 'Product added to cart successfully.';
-        setTimeout(() => (this.message = ''), 2000);
-      },
-      error: () => {
-        this.message = 'Error adding product to cart.';
-        setTimeout(() => (this.message = ''), 2000);
-      }
-    });
+  if (!customerStr) {
+    this.message = 'You are not logged in! Redirecting to login...';
+    setTimeout(() => this.router.navigate(['/login']), 2000);
+    return;
   }
+
+  const customerObj: Customer = JSON.parse(customerStr);
+  const idCustomer = customerObj.id;
+
+  if (!idCustomer) {
+    this.message = 'You are not logged in! Redirecting to login...';
+    setTimeout(() => this.router.navigate(['/login']), 2000);
+    return;
+  }
+
+  this.servCart.addToTheCart(idCustomer, idProduct).subscribe({
+    next: (res) => {
+      // הצג אנימציית הצלחה למוצר ספציפי
+      this.successProducts.add(idProduct);
+      setTimeout(() => this.successProducts.delete(idProduct), 1500);
+    },
+    error: () => {
+      // שגיאה בהוספה לסל
+    }
+  });
+}
 
   backCatalog(){
     this.router.navigate(['/main-catalog']);
@@ -152,6 +169,10 @@ export class Products implements OnInit {
       // עד גיל 30: מהמוצרים החדשים לישנים
       this.filteredProducts.sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime());
     }
+  }
+
+  isProductSuccess(productId: number): boolean {
+    return this.successProducts.has(productId);
   }
 
 }

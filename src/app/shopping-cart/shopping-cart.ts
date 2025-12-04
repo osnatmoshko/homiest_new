@@ -1,9 +1,11 @@
-import { Component, Renderer2, ElementRef, OnInit, NgZone } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Renderer2, ElementRef, OnInit, NgZone, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { CartService } from '../services/cart'; 
-import { CartItem } from '../models/cartItem'; 
+import { CartItem } from '../models/cartItem';
+import { ProductService } from '../services/product'; 
 
 @Component({
   selector: 'app-shopping-cart',
@@ -17,16 +19,24 @@ export class ShoppingCart implements OnInit {
   showCart: CartItem[] = [];
   totalAmount: number = 0;
   isLoggedIn: boolean = false;
+  productMap: Map<number, any> = new Map();
 
   constructor(
     private service: CartService,
     private renderer: Renderer2,
     private el: ElementRef,
     private router: Router,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private productService: ProductService,
+    private location: Location,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
     const customerStr = localStorage.getItem('customer');
     if (!customerStr) {
       this.createLoginButton();
@@ -45,6 +55,8 @@ export class ShoppingCart implements OnInit {
   }
 
   loadCart(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    
     const customerStr = localStorage.getItem('customer');
     if (!customerStr) return;
     const customerObj = JSON.parse(customerStr);
@@ -53,9 +65,23 @@ export class ShoppingCart implements OnInit {
     this.service.getCart(id).subscribe({
       next: (cart) => {
         this.showCart = cart.items || [];
+        this.loadProductImages();
         this.calculateTotal();
       },
       error: (err) => console.error('Error loading cart:', err),
+    });
+  }
+
+  loadProductImages(): void {
+    this.showCart.forEach(item => {
+      if (!this.productMap.has(item.productID)) {
+        this.productService.getById(item.productID).subscribe({
+          next: (product) => {
+            this.productMap.set(item.productID, product);
+          },
+          error: (err) => console.error('Error loading product:', err)
+        });
+      }
     });
   }
 
@@ -86,6 +112,8 @@ export class ShoppingCart implements OnInit {
   }
 
   deleteItem(productId: number) {
+    if (!isPlatformBrowser(this.platformId)) return;
+    
     const customerStr = localStorage.getItem('customer');
     if (!customerStr) return;
     const customerObj = JSON.parse(customerStr); 
@@ -101,6 +129,8 @@ export class ShoppingCart implements OnInit {
   }
 
   addItem(idProduct: number) {
+    if (!isPlatformBrowser(this.platformId)) return;
+    
     const customerStr = localStorage.getItem('customer')!;
     const customerObj = JSON.parse(customerStr);
     const idCustomer = customerObj.id;
@@ -115,6 +145,14 @@ export class ShoppingCart implements OnInit {
   }
 
   finishPurchase(): void {
+  if (!isPlatformBrowser(this.platformId)) return;
+  
+  // בדיקת מגבלת מחיר
+  if (this.totalAmount > 5000) {
+    this.showTemporaryMessage('Maximum purchase limit is $5,000. Please reduce your cart total.');
+    return;
+  }
+
   const customerStr = localStorage.getItem('customer')!;
   const customerObj = JSON.parse(customerStr!);
   const customerId = customerObj.id;
@@ -133,5 +171,22 @@ export class ShoppingCart implements OnInit {
     error: () => this.showTemporaryMessage('Error completing purchase.')
   });
 }
+
+  closeCart(): void {
+    this.location.back();
+  }
+
+  getProductImage(item: CartItem): string {
+    const product = this.productMap.get(item.productID);
+    if (product && product.imageURL) {
+      return product.imageURL;
+    }
+    // Fallback to a simple colored rectangle
+    return 'data:image/svg+xml;charset=UTF-8,%3Csvg width="80" height="80" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="80" height="80" fill="%23F5F0E1"/%3E%3Ctext x="40" y="45" text-anchor="middle" fill="%23B8A88B" font-size="12"%3EImage%3C/text%3E%3C/svg%3E';
+  }
+
+  goToLogin(): void {
+    this.router.navigate(['/login']);
+  }
 
 }

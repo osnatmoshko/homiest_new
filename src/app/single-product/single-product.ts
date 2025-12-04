@@ -1,6 +1,6 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, Inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ProductService } from '../services/product';
 import { Product } from '../models/product';
 import { CartService } from '../services/cart';
@@ -20,7 +20,8 @@ export class SingleProduct implements OnInit {
     private service: ProductService,
     private router: Router,
     private servCart: CartService,
-    private zone: NgZone // ← הוספה כאן
+    private zone: NgZone,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
@@ -37,6 +38,8 @@ export class SingleProduct implements OnInit {
   }
 
   addCart(idProduct: number) {
+    if (!isPlatformBrowser(this.platformId)) return;
+    
     const customerStr = localStorage.getItem('customer');
 
     if (!customerStr) {
