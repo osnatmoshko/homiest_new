@@ -7,6 +7,14 @@
 </div>
 
 <div class="filters-bar">
+  <div class="search-filter">
+    <label>Search:</label>
+    <input type="text" 
+           [(ngModel)]="searchTerm" 
+           (input)="applyFilters()" 
+           placeholder="Search products...">
+  </div>
+  
   <div class="range-filter" *ngIf="allProduct.length > 1">
     <label>Price Range (${{minPrice}} - ${{maxPrice}})</label>
     <ngx-slider 
@@ -25,6 +33,12 @@
       <option value="desc">Price High → Low</option>
     </select>
   </div>
+  
+  <button class="abc-sort-btn" 
+          [class.active]="sortOrder === 'alpha'"
+          (click)="sortAlphabetically()">
+    ABC
+  </button>
 </div>
 
 <div class="products-container">
@@ -35,7 +49,7 @@
   <div class="products-grid">
     <div *ngFor="let product of filteredProducts" class="product-item">
       <div class="product-image-wrapper">
-        <img [src]="product.imageURL" alt="{{product.productName}}">
+       <img [src]="product.imageURL + '?v=' + product.lastUpdated" alt="{{product.productName}}">
         <div class="product-overlay-bar">
           <div class="overlay-info">
             <span class="price">${{product.price}}</span>

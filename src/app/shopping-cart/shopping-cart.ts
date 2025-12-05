@@ -1,11 +1,30 @@
-import { Component, Renderer2, ElementRef, OnInit, NgZone, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, Renderer2, ElementRef, OnInit, NgZone, Inject, PLATFORM_ID, Injectable } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { CartService } from '../services/cart'; 
 import { CartItem } from '../models/cartItem';
-import { ProductService } from '../services/product'; 
+import { ProductService } from '../services/product';
+
+@Injectable({
+  providedIn: 'root'
+})
+class ProductCacheService {
+  private productCache: Map<number, any> = new Map();
+
+  getProduct(id: number): any {
+    return this.productCache.get(id);
+  }
+
+  setProduct(id: number, product: any): void {
+    this.productCache.set(id, product);
+  }
+
+  hasProduct(id: number): boolean {
+    return this.productCache.has(id);
+  }
+} 
 
 @Component({
   selector: 'app-shopping-cart',
@@ -19,7 +38,8 @@ export class ShoppingCart implements OnInit {
   showCart: CartItem[] = [];
   totalAmount: number = 0;
   isLoggedIn: boolean = false;
-  productMap: Map<number, any> = new Map();
+  purchaseCompleted: boolean = false;
+
 
   constructor(
     private service: CartService,
@@ -29,6 +49,7 @@ export class ShoppingCart implements OnInit {
     private ngZone: NgZone,
     private productService: ProductService,
     private location: Location,
+    private productCache: ProductCacheService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -74,10 +95,10 @@ export class ShoppingCart implements OnInit {
 
   loadProductImages(): void {
     this.showCart.forEach(item => {
-      if (!this.productMap.has(item.productID)) {
+      if (!this.productCache.hasProduct(item.productID)) {
         this.productService.getById(item.productID).subscribe({
           next: (product) => {
-            this.productMap.set(item.productID, product);
+            this.productCache.setProduct(item.productID, product);
           },
           error: (err) => console.error('Error loading product:', err)
         });
@@ -159,14 +180,14 @@ export class ShoppingCart implements OnInit {
 
   this.service.finishPurchase(customerId, this.purchaseNotes).subscribe({
     next: (res) => {
-      // הצגת הודעה תודה באנגלית
-      this.showTemporaryMessage('Thank you! Your purchase was completed successfully.');
+      // הצגת הודעת תודה עם אנימציה
+      this.purchaseCompleted = true;
+      this.message = '✓ Thank you! Your purchase was completed successfully.';
       this.purchaseNotes = '';
-      this.loadCart();
-      // נווט אחרי 2 שניות
+      // נווט אחרי 8 שניות
       setTimeout(() => {
-        this.router.navigate(['/']);
-      }, 2000);
+        this.router.navigate(['/home-page']);
+      }, 8000);
     },
     error: () => this.showTemporaryMessage('Error completing purchase.')
   });
@@ -177,9 +198,9 @@ export class ShoppingCart implements OnInit {
   }
 
   getProductImage(item: CartItem): string {
-    const product = this.productMap.get(item.productID);
+    const product = this.productCache.getProduct(item.productID);
     if (product && product.imageURL) {
-      return product.imageURL;
+      return product.imageURL + '?v=' + (product.lastUpdated || Date.now());
     }
     // Fallback to a simple colored rectangle
     return 'data:image/svg+xml;charset=UTF-8,%3Csvg width="80" height="80" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="80" height="80" fill="%23F5F0E1"/%3E%3Ctext x="40" y="45" text-anchor="middle" fill="%23B8A88B" font-size="12"%3EImage%3C/text%3E%3C/svg%3E';

@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxSliderModule, Options } from '@angular-slider/ngx-slider';
 import { ProductService } from '../services/product';
@@ -26,7 +26,8 @@ export class Products implements OnInit {
   filteredProducts: Product[] = [];
   minPrice!: number;
   maxPrice!: number;
-  sortOrder: 'asc' | 'desc' | '' = '';
+  sortOrder: 'asc' | 'desc' | 'alpha' | '' = '';
+  searchTerm: string = '';
 
   message: string = ''; // הודעה ליד המוצר
   successProducts: Set<number> = new Set(); // מעקב אחר מוצרים שנוספו בהצלחה
@@ -35,7 +36,8 @@ export class Products implements OnInit {
     private service: ProductService,
     private route: ActivatedRoute,
     private router: Router,
-    private servCart: CartService
+    private servCart: CartService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
@@ -66,6 +68,8 @@ export class Products implements OnInit {
   }
 
   setCategoryHeader(category: string): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    
     const categoryImages: {[key: string]: string} = {
       'Living Rooms': 'assets/pic/living-room-main-catalog.jpeg',
       'Bedrooms': 'assets/pic/bed-room-main-catalog.jpg',
@@ -87,11 +91,20 @@ export class Products implements OnInit {
       p.price >= this.minPrice && p.price <= this.maxPrice
     );
 
-    // מיון רגיל לפי מחיר
+    // סינון לפי חיפוש
+    if (this.searchTerm.trim()) {
+      result = result.filter(p => 
+        p.productName.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    }
+
+    // מיון
     if (this.sortOrder === 'asc') {
       result.sort((a, b) => a.price - b.price);
     } else if (this.sortOrder === 'desc') {
       result.sort((a, b) => b.price - a.price);
+    } else if (this.sortOrder === 'alpha') {
+      result.sort((a, b) => a.productName.localeCompare(b.productName));
     }
 
     this.filteredProducts = result;
@@ -106,6 +119,8 @@ export class Products implements OnInit {
 
   
 addCart(idProduct: number) {
+  if (!isPlatformBrowser(this.platformId)) return;
+  
   const customerStr = localStorage.getItem('customer');
 
   if (!customerStr) {
@@ -143,6 +158,8 @@ addCart(idProduct: number) {
   // מיון מותאם אישית לפי גיל
   // ----------------------
   getCustomerAge(): number {
+    if (!isPlatformBrowser(this.platformId)) return 0;
+    
     const customerStr = localStorage.getItem('customer');
     if (!customerStr) return 0;
 
@@ -173,6 +190,15 @@ addCart(idProduct: number) {
 
   isProductSuccess(productId: number): boolean {
     return this.successProducts.has(productId);
+  }
+
+  sortAlphabetically(): void {
+    if (this.sortOrder === 'alpha') {
+      this.sortOrder = '';
+    } else {
+      this.sortOrder = 'alpha';
+    }
+    this.applyFilters();
   }
 
 }

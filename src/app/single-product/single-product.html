@@ -4,7 +4,7 @@
     
     <div class="product-modal">
       <div class="product-image-section">
-        <img [src]="product.imageURL" alt="{{ product.productName }}">
+        <img [src]="product.imageURL  + '?v=' + product.lastUpdated"  alt="{{ product.productName }}">
       </div>
       
       <div class="product-details-section">
@@ -25,7 +25,7 @@
           Add to Cart
         </button>
         
-        <div *ngIf="message" class="success-message">
+        <div *ngIf="message" class="single-product-success">
           {{ message }}
         </div>
       </div>

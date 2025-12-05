@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common'; // ← חובה ל-ngIf
+import { CommonModule } from '@angular/common'; 
 import { CustomerService } from '../services/customer';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule], // ← הוסף CommonModule כאן
+  imports: [FormsModule, CommonModule], 
   templateUrl: './login.html'
 })
 export class Login {
